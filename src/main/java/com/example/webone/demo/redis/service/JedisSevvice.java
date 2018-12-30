@@ -27,6 +27,6 @@ public class JedisSevvice {
         jedisRequestVO.setKey("lhx");
         jedisRequestVO.setValue("1725");
         returnVO = redisUseInterface.jedisForStringSet(jedisRequestVO);
-        logger.info("returnVO:"+returnVO);
+        logger.info("returnVO:retCode["+returnVO.getRetCode()+"],retMsg["+returnVO.getRetMsg()+"]");
     }
 }
