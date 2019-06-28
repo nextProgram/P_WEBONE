@@ -9,6 +9,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import static org.junit.Assert.*;
 
 /**
+ * 测试jedis
  * @author lhx
  * @date 2018/12/12
  */
