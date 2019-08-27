@@ -33,12 +33,12 @@ public class MsgProduceServiceTest {
 
     /**
      * 一个exchange绑定两个queue
-     * 发送10条消息 结果：发送成功 报错：Exception delivering confirm
+     * 发送5条消息 结果：发送成功 报错：Exception delivering confirm
      */
     @Test
     public void sendOrder() {
         for(int i = 0;i<5;i++){
-            CorrelationData correlationData = new CorrelationData(UUID.randomUUID().toString());
+            CorrelationData correlationData = new CorrelationData(System.currentTimeMillis() + "$" + UUID.randomUUID().toString());
             msgProduceService.sendOrder("myOrder","fruit","fruit message "+i,correlationData);
         }
     }

@@ -46,29 +46,29 @@ public class MsgProduceService {
      * @param message 消息
      */
     public void sendOrder(String exchange,String routingKey,String message,CorrelationData correlationData1){
+        //消息确认, 需要配置 publisher-confirms: true(类似于connectionFactory.setPublisherConfirms(true);)
+        rabbitTemplate.setMandatory(true);
         //采用实现接口的方式设置ConfirmCallback
         //rabbitTemplate.setConfirmCallback(this);
-        //发送消息
-        logger.debug("publisher CallBackConfirm ID: {}",correlationData1.getId());
-        rabbitTemplate.convertAndSend(exchange,routingKey,message,correlationData1);
-        logger.info("----->发送消息成功,exchange:{},routingKey:{},message:{}",exchange,routingKey,message);
-        //消息确认, 需要配置 publisher-confirms: true
-        //消息发送失败则返回, 需要配置 publisher-returns: true
-        rabbitTemplate.setMandatory(true);
         rabbitTemplate.setConfirmCallback((correlationData, ack, cause) -> {
             if (ack) {
-                //发送成功
+                //发送成功，做相应处理
                 logger.debug("消息发送到exchange成功,id: {}", correlationData.getId());
             } else {
                 //发送失败
                 logger.debug("消息发送到exchange失败,原因: {}", cause);
             }
         });
-        // 消息返回, 需要配置 publisher-returns: true
-        /*rabbitTemplate.setReturnCallback((message, replyCode, replyText, exchange, routingKey) -> {
-            String correlationId = message.getMessageProperties().getCorrelationId();
-            logger.debug("消息：{} 发送失败, 应答码：{} 原因：{} 交换机: {}  路由键: {}", correlationId, replyCode, replyText, exchange, routingKey);
-        });*/
+        //消息发送失败则返回, 需要配置 publisher-returns: true
+        rabbitTemplate.setReturnCallback((message1, replyCode, replyText, exchange1, routingKey1) -> {
+            String correlationId = message1.getMessageProperties().getCorrelationId();
+            logger.debug("消息：{} 发送失败, 应答码：{} 原因：{} 交换机: {}  路由键: {}", correlationId, replyCode, replyText, exchange1, routingKey1);
+        });
+
+        //发送消息
+        logger.debug("publisher CallBackConfirm ID: {}",correlationData1.getId());
+        rabbitTemplate.convertAndSend(exchange,routingKey,message,correlationData1);
+        logger.info("----->发送消息成功,exchange:{},routingKey:{},message:{}",exchange,routingKey,message);
     }
 
     /**
